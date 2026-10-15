@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Nearby Medical Facilities" %} - MediMatch{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Page Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-map-marker-alt text-primary"></i> {% trans "Nearby Medical Facilities" %}
+                </h1>
+                <p class="lead text-muted">
+                    {% trans "Find hospitals, clinics, and pharmacies near you" %}
+                </p>
+            </div>
+
+            <!-- API Key Warning -->
+            {% if not api_configured %}
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% trans "LocationIQ API key is not configured. Add LOCATIONIQ_API_KEY to your environment to use this feature." %}
+                </div>
+            {% endif %}
+
+            <!-- Search Form -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <form method="post" action="{% url 'nearby' %}" id="nearby-form">
+                        {% csrf_token %}
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <label for="location-input" class="form-label fw-bold">
+                                    <i class="fas fa-map-marker-alt"></i> {% trans "Location" %}
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" id="location-input" name="location"
+                                           class="form-control"
+                                           placeholder="{% trans 'Enter address or city' %}"
+                                           autocomplete="off"
+                                           value="{{ request.POST.location|default:'' }}">
+                                    <button type="button" id="geolocate-btn"
+                                            class="btn btn-outline-secondary"
+                                            title="{% trans 'Use my current location' %}"
+                                            type="button">
+                                        <i class="fas fa-location-dot"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i> {% trans "Enter an address, or click the GPS button to use your current location." %}
+                                </div>
+                                <input type="hidden" id="lat-input" name="lat" value="{{ request.POST.lat|default:'' }}">
+                                <input type="hidden" id="lon-input" name="lon" value="{{ request.POST.lon|default:'' }}">
+                                <input type="hidden" id="location-name-input" name="location_name" value="{{ request.POST.location_name|default:'' }}">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="facility-type" class="form-label fw-bold">
+                                    <i class="fas fa-stethoscope"></i> {% trans "Facility Type" %}
+                                </label>
+                                <select id="facility-type" name="facility_type" class="form-select">
+                                    <option value="all" {% if selected_type == 'all' %}selected{% endif %}>{% trans "All Types" %}</option>
+                                    <option value="hospital" {% if selected_type == 'hospital' %}selected{% endif %}>{% trans "Hospitals" %}</option>
+                                    <option value="clinic" {% if selected_type == 'clinic' %}selected{% endif %}>{% trans "Clinics" %}</option>
+                                    <option value="pharmacy" {% if selected_type == 'pharmacy' %}selected{% endif %}>{% trans "Pharmacies" %}</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label for="radius" class="form-label fw-bold">
+                                    <i class="fas fa-ruler-combined"></i> {% trans "Radius" %}
+                                </label>
+                                <select id="radius" name="radius" class="form-select">
+                                    <option value="1000" {% if selected_radius == '1000' %}selected{% endif %}>{% trans "1 km" %}</option>
+                                    <option value="3000" {% if selected_radius == '3000' %}selected{% endif %}>{% trans "3 km" %}</option>
+                                    <option value="5000" {% if selected_radius == '5000' %}selected{% endif %}>{% trans "5 km" %}</option>
+                                    <option value="10000" {% if selected_radius == '10000' %}selected{% endif %}>{% trans "10 km" %}</option>
+                                    <option value="20000" {% if selected_radius == '20000' %}selected{% endif %}>{% trans "20 km" %}</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2 d-grid">
+                                <button type="submit" class="btn btn-primary" id="search-btn">
+                                    <i class="fas fa-search"></i> {% trans "Search" %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            {% if error %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                </div>
+            {% endif %}
+
+            <!-- Results Section -->
+            {% if searched and facilities is not none %}
+                <!-- Map -->
+                {% if map_url %}
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-body p-0 text-center">
+                            <img src="{{ map_url }}" alt="{% trans 'Map of nearby facilities' %}"
+                                 class="img-fluid rounded map-placeholder">
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Results Summary -->
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list text-primary"></i> {% trans "Search Results" %}
+                        <span class="badge bg-primary">{{ facilities|length }}</span>
+                    </h5>
+                    {% if location_name %}
+                        <span class="text-muted small">
+                            <i class="fas fa-location-dot"></i> {% trans "Near" %}: {{ location_name|truncatechars:80 }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if facilities %}
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        {% for facility in facilities %}
+                            <div class="col">
+                                <div class="card h-100 shadow-sm border-0 facility-card">
+                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 fw-bold text-truncate">
+                                            {% if facility.name %}{{ facility.name }}{% else %}<em class="text-muted">{% trans "Unnamed" %}</em>{% endif %}
+                                        </h6>
+                                        <span class="badge bg-{{ facility.badge_class }} text-uppercase small">
+                                            {{ facility.type_label }}
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-muted small mb-2">
+                                            <i class="fas fa-location-dot"></i> {{ facility.display_name|truncatechars:120 }}
+                                        </p>
+                                        <p class="mb-2">
+                                            <i class="fas fa-walking text-primary"></i>
+                                            <strong>{% trans "Distance" %}:</strong> {{ facility.distance_km|floatformat:1 }} {% trans "km" %}
+                                            ({{ facility.distance|floatformat:0 }} {% trans "meters" %})
+                                        </p>
+                                        {% if facility.address %}
+                                            {% with addr=facility.address %}
+                                                {% if addr.state or addr.country %}
+                                                    <p class="text-muted small mb-0">
+                                                        {% if addr.city %}{{ addr.city }}, {% endif %}
+                                                        {% if addr.state %}{{ addr.state }}, {% endif %}
+                                                        {% if addr.country %}{{ addr.country }}{% endif %}
+                                                    </p>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    </div>
+                                    {% if facility.lat and facility.lon %}
+                                        <div class="card-footer bg-light text-center">
+                                            <a href="https://www.openstreetmap.org/?mlat={{ facility.lat }}&amp;mlon={{ facility.lon }}&amp;zoom=17"
+                                               target="_blank" rel="noopener"
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt"></i> {% trans "View on Map" %}
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-search-location" style="font-size: 4rem; color: #cbd5e1;"></i>
+                        <h4 class="mt-3 text-muted">{% trans "No facilities found" %}</h4>
+                        <p class="text-muted">
+                            {% trans "No matching facilities were found in this area. Try expanding your search radius or location." %}
+                        </p>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Info Cards -->
+            {% if searched %}
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card border-info">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-info-circle text-info"></i> {% trans "How it works" %}
+                                </h6>
+                                <p class="card-text small mb-0">
+                                    {% trans "We use the LocationIQ API to search OpenStreetMap data for nearby medical facilities including hospitals, clinics, and pharmacies." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-warning">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i> {% trans "Emergency" %}
+                                </h6>
+                                <p class="card-text small mb-0">
+                                    {% trans "In a medical emergency, call your local emergency number immediately." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    var geolocateBtn = document.getElementById('geolocate-btn');
+    var locationInput = document.getElementById('location-input');
+    var latInput = document.getElementById('lat-input');
+    var lonInput = document.getElementById('lon-input');
+    var locationNameInput = document.getElementById('location-name-input');
+
+    function setBusy(btn, busy) {
+        if (busy) {
+            btn.disabled = true;
+            btn.dataset.originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        } else {
+            btn.disabled = false;
+            if (btn.dataset.originalHtml) {
+                btn.innerHTML = btn.dataset.originalHtml;
+            }
+        }
+    }
+
+    geolocateBtn.addEventListener('click', function() {
+        if (!navigator.geolocation) {
+            alert('{% trans "Geolocation is not supported by your browser." %}');
+            return;
+        }
+
+        setBusy(this, true);
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                var lat = position.coords.latitude.toFixed(6);
+                var lon = position.coords.longitude.toFixed(6);
+                latInput.value = lat;
+                lonInput.value = lon;
+                locationNameInput.value = lat + ', ' + lon;
+                locationInput.value = '';
+                locationInput.disabled = true;
+                setBusy(geolocateBtn, false);
+                geolocateBtn.innerHTML = '<i class="fas fa-check text-success"></i>';
+            },
+            function() {
+                setBusy(geolocateBtn, false);
+                alert('{% trans "Unable to retrieve your location. Please enter an address manually." %}');
+            }
+        );
+    });
+
+    locationInput.addEventListener('input', function() {
+        if (this.value) {
+            locationInput.disabled = false;
+            latInput.value = '';
+            lonInput.value = '';
+            locationNameInput.value = '';
+            geolocateBtn.innerHTML = '<i class="fas fa-location-dot"></i>';
+        }
+    });
+})();
+</script>
+{% endblock %}

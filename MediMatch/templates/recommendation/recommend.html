@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Get Recommendation" %} - {% trans "Medicine Recommendation System" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Language Selector -->
+            {% get_current_language as LANGUAGE_CODE %}
+            <div class="text-end mb-3">
+                <div class="btn-group" role="group">
+                    <form action="{% url 'set_language' %}" method="post" style="display: inline; margin-right: 5px;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="/recommend/">
+                        <input name="language" type="hidden" value="en">
+                        <button type="submit" class="btn btn-sm {% if LANGUAGE_CODE == 'en' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            🇬🇧 English
+                        </button>
+                    </form>
+                    <form action="{% url 'set_language' %}" method="post" style="display: inline; margin-right: 5px;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="/recommend/">
+                        <input name="language" type="hidden" value="hi">
+                        <button type="submit" class="btn btn-sm {% if LANGUAGE_CODE == 'hi' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            🇮🇳 हिन्दी
+                        </button>
+                    </form>
+                    <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="/recommend/">
+                        <input name="language" type="hidden" value="mr">
+                        <button type="submit" class="btn btn-sm {% if LANGUAGE_CODE == 'mr' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            🇮🇳 मराठी
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h3 class="mb-0">
+                        <i class="fas fa-stethoscope"></i> {% trans "Medicine Recommendation" %}
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>{% trans "Note" %}:</strong> {% trans "Please provide accurate information for better recommendations. This system is for informational purposes only and does not replace professional medical advice." %}
+                    </div>
+
+                    <form method="post" action="{% url 'recommend' %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.symptoms.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-notes-medical"></i> {% trans "Symptoms" %}
+                            </label>
+                            {{ form.symptoms }}
+                            {% if form.symptoms.errors %}
+                                <div class="text-danger small mt-1">{{ form.symptoms.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">
+                                {% trans "Example: fever, headache, cough, sore throat" %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.age.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fas fa-birthday-cake"></i> {% trans "Age" %}
+                                </label>
+                                {{ form.age }}
+                                {% if form.age.errors %}
+                                    <div class="text-danger small mt-1">{{ form.age.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.gender.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fas fa-user"></i> {% trans "Gender" %}
+                                </label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}
+                                    <div class="text-danger small mt-1">{{ form.gender.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.medical_history.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-file-medical"></i> {% trans "Medical History" %}
+                            </label>
+                            {{ form.medical_history }}
+                            {% if form.medical_history.errors %}
+                                <div class="text-danger small mt-1">{{ form.medical_history.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">
+                                {% trans "Include any allergies, chronic conditions, or current medications" %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search"></i> {% trans "Get Recommendations" %}
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> {% trans "Back to Home" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Cards -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-exclamation-triangle text-warning"></i> {% trans "Important" %}
+                            </h6>
+                            <p class="card-text small mb-0">
+                                {% trans "These recommendations are AI-generated and should not replace professional medical consultation." %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-check-circle text-success"></i> {% trans "Privacy" %}
+                            </h6>
+                            <p class="card-text small mb-0">
+                                {% trans "Your information is used only for generating recommendations and is stored securely." %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

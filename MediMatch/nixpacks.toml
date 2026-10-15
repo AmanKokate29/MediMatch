@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ['python311']
+
+[phases.install]
+cmds = ['pip install -r requirements.txt']
+
+[phases.build]
+cmds = [
+	'chmod +x ./start.sh',
+	'python manage.py collectstatic --no-input'
+]
+
+[start]
+cmd = 'bash ./start.sh'

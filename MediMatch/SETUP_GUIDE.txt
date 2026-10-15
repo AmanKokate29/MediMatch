@@ -1,0 +1,51 @@
+# Quick Setup Guide
+
+## 1. Create and Activate Virtual Environment
+
+### Windows:
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+### Linux/Mac:
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+## 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+## 3. Setup Database
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+## 4. Create Admin User (Optional)
+```bash
+python manage.py createsuperuser
+```
+
+## 5. Run Server
+```bash
+python manage.py runserver
+```
+
+## 6. Open in Browser
+- Main Site: http://127.0.0.1:8000/
+- Admin Panel: http://127.0.0.1:8000/admin/
+
+## Features to Try:
+1. Navigate to "Get Recommendation"
+2. Enter symptoms like: "fever, headache, body ache"
+3. Fill in age and gender
+4. Click "Get Recommendations"
+5. View detailed medicine information
+6. Check "History" to see past queries
+
+## Need Help?
+Check README.md for detailed documentation.

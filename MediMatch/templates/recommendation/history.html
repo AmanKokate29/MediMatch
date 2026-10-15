@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}History - Medicine Recommendation System{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-5">
+        <i class="fas fa-history text-primary"></i> Query History
+    </h1>
+
+    {% if queries %}
+        <div class="row">
+            {% for query in queries %}
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-calendar"></i> {{ query.created_at|date:"F d, Y - H:i" }}
+                                </h5>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <span class="badge bg-info">Age: {{ query.age }}</span>
+                                <span class="badge bg-secondary">{{ query.gender }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6 class="text-primary">
+                                <i class="fas fa-notes-medical"></i> Symptoms
+                            </h6>
+                            <p class="mb-0">{{ query.symptoms }}</p>
+                        </div>
+
+                        {% if query.medical_history %}
+                        <div class="mb-3">
+                            <h6 class="text-primary">
+                                <i class="fas fa-file-medical"></i> Medical History
+                            </h6>
+                            <p class="mb-0">{{ query.medical_history }}</p>
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-0">
+                            <h6 class="text-primary">
+                                <i class="fas fa-pills"></i> Recommended Medicines
+                            </h6>
+                            {% if query.recommendations %}
+                                <div class="row">
+                                    {% for rec in query.recommendations %}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="border rounded p-2">
+                                            <strong>{{ rec.medicine_name }}</strong>
+                                            <span class="badge bg-success float-end">{{ rec.similarity_score }}%</span>
+                                            <br>
+                                            <small class="text-muted">{{ rec.category }}</small>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No recommendations available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card shadow-sm">
+            <div class="card-body text-center p-5">
+                <i class="fas fa-inbox fa-5x text-muted mb-4"></i>
+                <h3>No History Found</h3>
+                <p class="text-muted mb-4">You haven't made any medicine recommendations yet.</p>
+                <a href="{% url 'recommend' %}" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Get Your First Recommendation
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}

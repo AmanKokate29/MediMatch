@@ -1,0 +1,429 @@
+/* Custom CSS for Medicine Recommendation System */
+
+:root {
+    --primary-color: #2563eb;
+    --primary-light: #60a5fa;
+    --primary-dark: #1e40af;
+    --secondary-color: #6c757d;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --background-white: #ffffff;
+    --background-light: #f8fafc;
+}
+
+/* Global Styles */
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    color: var(--text-dark);
+}
+
+main {
+    flex: 1;
+}
+
+/* Minimal Hero Section */
+.hero-section-minimal {
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-icon {
+    font-size: 5rem;
+    color: var(--primary-color);
+}
+
+.hero-title {
+    color: var(--primary-dark);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+/* Buttons */
+.btn-primary-custom {
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+    background: var(--primary-dark);
+    color: white;
+}
+
+.btn-outline-custom {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-custom:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Features Section */
+.features-minimal {
+    background: white;
+}
+
+.feature-card-minimal {
+    background: white;
+    border-radius: 12px;
+    transition: box-shadow 0.2s ease;
+    border: 1px solid #e2e8f0;
+    height: 100%;
+}
+
+.feature-card-minimal:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.feature-icon-minimal {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.feature-icon-minimal i {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.feature-card-minimal h5 {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.card-header {
+    font-weight: 600;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Feature Icons */
+.feature-icon {
+    padding: 20px;
+    border-radius: 12px;
+    display: inline-block;
+    background: #f8fafc;
+}
+
+/* Step Numbers */
+.step-number {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: var(--primary-color);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto;
+}
+
+/* Form Styles */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    padding: 12px 15px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-label {
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 8px;
+    padding: 12px 30px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-lg {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 8px;
+    border: none;
+    padding: 15px 20px;
+}
+
+.alert-heading {
+    font-weight: 600;
+}
+
+/* Badge Styles */
+.badge {
+    padding: 6px 12px;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+/* Navigation */
+.navbar {
+    background: var(--primary-color) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white !important;
+}
+
+.nav-link {
+    font-weight: 500;
+    margin: 0 10px;
+    transition: opacity 0.2s ease;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.nav-link:hover {
+    color: white !important;
+    opacity: 0.8;
+}
+
+.dropdown-menu {
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    transition: background-color 0.2s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f8fafc;
+    color: var(--primary-color);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Medicine Cards on Results Page */
+.hover-card {
+    transition: box-shadow 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.hover-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Icons */
+.fa-10x {
+    font-size: 10em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 0;
+        text-align: center;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .fa-10x {
+        font-size: 6em;
+        margin-top: 30px;
+    }
+    
+    .step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+}
+
+/* Loading Spinner */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Utility Classes */
+.text-justify {
+    text-align: justify;
+}
+
+.shadow-custom {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f8fafc;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* Nearby Facilities Page */
+.facility-card {
+    transition: transform 0.2s ease;
+}
+
+.facility-card:hover {
+    transform: translateY(-3px);
+}
+
+.map-placeholder {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+}
+
+/* Navbar & Language Dropdown Styles */
+.navbar-dark .navbar-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.navbar-dark .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+}
+
+.navbar-dark .nav-link:hover {
+    color: white !important;
+    opacity: 0.8;
+}
+
+.navbar .dropdown-menu {
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0;
+    min-width: 200px;
+    margin-top: 0.5rem;
+}
+
+.navbar .dropdown-item {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.navbar .dropdown-item:hover {
+    background: #f8fafc;
+    color: var(--primary-color);
+}
+
+.navbar .dropdown-item.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.navbar .dropdown-item.active:hover {
+    color: white;
+}
+
+.navbar .dropdown-toggle::after {
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
